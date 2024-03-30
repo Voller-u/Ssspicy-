@@ -4,5 +4,9 @@ using UnityEngine;
 
 public class Pepper : Collectable
 {
-
+    public override void Eaten(Player player)
+    {
+        base.Eaten(player);
+        player.EatPepper();
+    }
 }
