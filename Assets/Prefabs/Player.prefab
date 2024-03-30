@@ -103,7 +103,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flying: 0
   flyDir: {x: 0, y: 0, z: 0}
-  flySpeed: 4
+  flySpeed: 0.005
   bodies:
   - {fileID: 0}
   - {fileID: 0}

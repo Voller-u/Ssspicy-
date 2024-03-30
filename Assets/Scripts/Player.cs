@@ -90,8 +90,9 @@ public class Player : MonoBehaviour
     /// 根据蛇的移动方向dir调整蛇头的贴图
     /// </summary>
     /// <param name="dir">移动方向</param>
-    void UpdateSprite(Vector3 dir)
+     public void UpdateSprite(Vector3 dir)
     {
+        if(flying) return;
         //if (dir == orient) 
         //    return;
         if(dir == Vector3.right)

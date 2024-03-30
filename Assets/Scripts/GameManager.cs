@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
             {
                 obj.GetComponent<Player>().flying = false;
                 obj.GetComponent<Player>().fire.SetActive(false);
+                obj.GetComponent<Player>().UpdateSprite(-obj.GetComponent<Player>().flyDir);
             }
             else if(obj.GetComponent<Body>() != null)
             {
