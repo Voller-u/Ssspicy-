@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class Player : MonoBehaviour
     //头部朝向
     public Vector3 orient;
     private Rigidbody2D rb;
+    public LayerMask detectLayer;
     // Start is called before the first frame update
     void Start()
     {
@@ -89,28 +91,55 @@ public class Player : MonoBehaviour
 
     void InputKey()
     {
+        Vector3 moveDir = Vector3.zero;
         if(Input.GetKeyDown(KeyCode.W))
         {
             if ((Vector3.up + orient).x == 0 && (Vector3.up + orient).y == 0) return;
-            Move(Vector3.up);
+            moveDir = Vector3.up;
         }
 
         else if(Input.GetKeyDown(KeyCode.S))
         {
             if ((Vector3.down + orient).x == 0 && (Vector3.down + orient).y == 0) return;
-            Move(Vector3.down);
+            moveDir=Vector3.down;
         }
 
         else if (Input.GetKeyDown(KeyCode.D))
         {
             if ((Vector3.right + orient).x == 0 && (Vector3.right + orient).y == 0) return;
-            Move(Vector3.right);
+            moveDir= Vector3.right;
         }
 
         else if( Input.GetKeyDown(KeyCode.A)) 
         {
             if ((Vector3.left + orient).x == 0 && (Vector3.left + orient).y == 0) return;
-            Move(Vector3.left);
+            moveDir = Vector3.left;
+        }
+
+        //如果输入了方向键
+        if(moveDir != Vector3.zero)
+        {
+            if(CanMoveDir(moveDir))
+            {
+                Move(moveDir);
+            }
+        }
+    }
+
+    private bool CanMoveDir(Vector3 moveDir)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, moveDir, 1f, detectLayer);
+
+        if (!hit)
+            return true;
+        else
+        {
+            if (hit.collider.GetComponent<Collectable>() != null)
+            {
+                return hit.collider.GetComponent<Collectable>().CanMoveDir(moveDir);
+            }
+            //这时候就应该吃掉
+            else return false;
         }
     }
 

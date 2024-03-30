@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4095353285601575726}
   - component: {fileID: 532204446094947953}
   - component: {fileID: 3729602280944902507}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,4 +98,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flying: 0
-  bodies: []
+  bodies:
+  - {fileID: 0}
+  - {fileID: 0}
+  sprites:
+  - {fileID: 21300000, guid: a21826afd3fa3da43b58abfb96d7848a, type: 3}
+  - {fileID: 21300000, guid: 8f84157fbc88b1a46aae39eeda9d4103, type: 3}
+  - {fileID: 21300000, guid: 8cbc81e65ad535444b18f680a0e30f99, type: 3}
+  - {fileID: 21300000, guid: 49ff54b269c1a0b44812d8361117dec9, type: 3}
+  orient: {x: 0, y: 0, z: 0}
+  detectLayer:
+    serializedVersion: 2
+    m_Bits: 0
