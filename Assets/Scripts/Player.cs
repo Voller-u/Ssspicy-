@@ -10,6 +10,9 @@ public class Player : MonoBehaviour
     public bool flying;
     public Vector3 flyDir;
     public float flySpeed;
+    [Header("掉落属性")]
+    public bool falling;
+    public float fallingSpeed;
     [Header("身体部位")]
     public List<Body> bodies = new List<Body>();
     [Header("爬行头部贴图")]
@@ -26,7 +29,10 @@ public class Player : MonoBehaviour
     //头部朝向
     public Vector3 orient;
     private Rigidbody2D rb;
+    private Collider2D coll;
+    [Header("射线检测的层")]
     public LayerMask detectLayer;
+    public LayerMask ground;
     Vector3 moveDir = Vector3.zero;
 
     [Header("状态位置")]
@@ -43,6 +49,7 @@ public class Player : MonoBehaviour
     {
         InitSprite();
         rb = GetComponent<Rigidbody2D>();
+        coll = GetComponent<Collider2D>();
     }
 
     // Update is called once per frame
@@ -52,16 +59,63 @@ public class Player : MonoBehaviour
         Fly();
         UpdateTail();
         UpdateBody();
-        CooperationRectify();   
+        CooperationRectify();
+        FallJudge();
     }
 
     void UpdateTail()
     {
-        for(int i=0;i<bodies.Count;i++)
+        for (int i = 0; i < bodies.Count; i++)
         {
             bodies[i].isTail = false;
             if (i == bodies.Count - 1) bodies[i].isTail = true;
         }
+    }
+
+    void FallJudge()
+    {
+        if (falling)
+        {
+            Fall();
+        }
+        if (!flying)
+        {
+            bool fall = true;
+            if (coll.IsTouchingLayers(ground)) fall = false;
+            foreach (var b in bodies)
+            {
+                if (b.coll.IsTouchingLayers(ground)) fall = false;
+            }
+            if (fall)
+            {
+                Debug.Log("掉下去");
+                falling = true;
+                if (orient == Vector3.right)
+                    GetComponent<SpriteRenderer>().sprite = fallingSprites[0];
+                else if (orient == Vector3.down)
+                    GetComponent<SpriteRenderer>().sprite = fallingSprites[1];
+                else if (orient == Vector3.left)
+                    GetComponent<SpriteRenderer>().sprite = fallingSprites[2];
+                else if (orient == Vector3.up)
+                    GetComponent<SpriteRenderer>().sprite = fallingSprites[3];
+
+                coll.enabled = false;
+                foreach (var b in bodies) b.coll.enabled = false;
+
+                GetComponent<SpriteRenderer>().sortingOrder = -10;
+                foreach(var b in bodies) b.GetComponent<SpriteRenderer>().sortingOrder = -10;
+                Fall();
+            }
+
+        }
+    }
+
+    void Fall()
+    {
+        
+
+        transform.position = new Vector3(transform.position.x,
+            transform.position.y - Time.deltaTime * fallingSpeed, transform.position.z);
     }
 
     /// <summary>
@@ -69,16 +123,16 @@ public class Player : MonoBehaviour
     /// </summary>
     void InitSprite()
     {
-        int index = 0; 
-        for(int i =0;i<sprites.Count;i++)
+        int index = 0;
+        for (int i = 0; i < sprites.Count; i++)
         {
-            if(GetComponent<SpriteRenderer>().sprite == sprites[i])
+            if (GetComponent<SpriteRenderer>().sprite == sprites[i])
             {
                 index = i;
                 break;
             }
         }
-        switch(index)
+        switch (index)
         {
             case 0: orient = Vector3.right; break;
             case 1: orient = Vector3.down; break;
@@ -90,12 +144,12 @@ public class Player : MonoBehaviour
     /// 根据蛇的移动方向dir调整蛇头的贴图
     /// </summary>
     /// <param name="dir">移动方向</param>
-     public void UpdateSprite(Vector3 dir)
+    public void UpdateSprite(Vector3 dir)
     {
-        if(flying) return;
+        if (flying || falling) return;
         //if (dir == orient) 
         //    return;
-        if(dir == Vector3.right)
+        if (dir == Vector3.right)
         {
             GetComponent<SpriteRenderer>().sprite = sprites[0];
         }
@@ -114,7 +168,7 @@ public class Player : MonoBehaviour
 
         orient = dir;
 
-        
+
     }
 
     void UpdateBody()
@@ -143,14 +197,14 @@ public class Player : MonoBehaviour
     void InputKey()
     {
         Vector3 tempMoveDir = Vector3.zero;
-        if(Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.W))
         {
             Debug.Log("W");
             if ((Vector3.up + orient).x == 0 && (Vector3.up + orient).y == 0) return;
             tempMoveDir = Vector3.up;
         }
 
-        else if(Input.GetKeyDown(KeyCode.S))
+        else if (Input.GetKeyDown(KeyCode.S))
         {
             if ((Vector3.down + orient).x == 0 && (Vector3.down + orient).y == 0) return;
             tempMoveDir = Vector3.down;
@@ -162,14 +216,14 @@ public class Player : MonoBehaviour
             tempMoveDir = Vector3.right;
         }
 
-        else if( Input.GetKeyDown(KeyCode.A)) 
+        else if (Input.GetKeyDown(KeyCode.A))
         {
             if ((Vector3.left + orient).x == 0 && (Vector3.left + orient).y == 0) return;
             tempMoveDir = Vector3.left;
         }
-        
+
         //如果输入了方向键
-        if(tempMoveDir != Vector3.zero && !flying)
+        if (tempMoveDir != Vector3.zero && !flying && !falling)
         {
             Debug.Log(tempMoveDir);
             moveDir = tempMoveDir;
@@ -177,14 +231,14 @@ public class Player : MonoBehaviour
             {
                 Debug.Log("CanMove");
                 Move(tempMoveDir);
-                
+
             }
         }
     }
 
     void CooperationRectify()
     {
-        if (flying) return;
+        if (flying || falling) return;
     
         transform.position = new Vector3(Mathf.Floor(transform.position.x) + 0.5f,
            Mathf.Floor(transform.position.y) + 0.5f, transform.position.z);
@@ -266,13 +320,14 @@ public class Player : MonoBehaviour
             Vector3 targetPos = poses[i];
             bodies[i].transform.position = new Vector3(targetPos.x, targetPos.y, targetPos.z);
         }
-        if(status.Count > 0)
+        UpdateSprite(dir);
+        if (status.Count > 0)
         {
             //吃到了香蕉
             EatBanana();
             status.Clear();
         }
-        UpdateSprite(dir);
+        
     }
 
     public void EatPepper()
@@ -324,6 +379,15 @@ public class Player : MonoBehaviour
         Vector3 pos = status[^1];
         bd.transform.position = new Vector3(pos.x, pos.y, pos.z);
         bodies.Add(bd.GetComponent<Body>());
+        if (orient == Vector3.right)
+            GetComponent<SpriteRenderer>().sprite = happySprites[0];
+        else if (orient == Vector3.down)
+            GetComponent<SpriteRenderer>().sprite = happySprites[1];
+        else if (orient == Vector3.left)
+            GetComponent<SpriteRenderer>().sprite = happySprites[2];
+        else if (orient == Vector3.up)
+            GetComponent<SpriteRenderer>().sprite = happySprites[3];
+
     }
 
     public void RecordPos()

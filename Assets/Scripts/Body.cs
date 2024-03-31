@@ -14,7 +14,9 @@ public class Body : MonoBehaviour
     [Header("Î²°ÍÌùÍ¼")]
     public List<Sprite> tailSprites;
     public LayerMask detectLayer;
+    public LayerMask ground;
     public Rigidbody2D rb;
+    public Collider2D coll;
     public bool isTail;
     void Start()
     {
@@ -31,6 +33,7 @@ public class Body : MonoBehaviour
             if(sp == sprite) isTail = true;
         }
         rb = GetComponent<Rigidbody2D>();
+        coll = GetComponent<Collider2D>();
     }
 
     // Update is called once per frame

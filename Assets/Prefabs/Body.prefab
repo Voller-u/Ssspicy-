@@ -75,7 +75,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1210268449
   m_SortingLayer: 1
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 744912931, guid: 85dcb1175e66e2141af8ae2157900e0e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -117,7 +117,11 @@ MonoBehaviour:
   detectLayer:
     serializedVersion: 2
     m_Bits: 448
+  ground:
+    serializedVersion: 2
+    m_Bits: 0
   rb: {fileID: 0}
+  coll: {fileID: 0}
   isTail: 0
 --- !u!50 &3164331470331202081
 Rigidbody2D:
