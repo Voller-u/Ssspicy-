@@ -8,6 +8,8 @@ TagManager:
   - Collectable
   - Body
   - Hole
+  - Fire
+  - SandPit
   layers:
   - Default
   - TransparentFX

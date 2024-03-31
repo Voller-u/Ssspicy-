@@ -18,6 +18,8 @@ public class Body : MonoBehaviour
     public Rigidbody2D rb;
     public Collider2D coll;
     public bool isTail;
+    [Header("»Ò³¾Ô¤ÖÆÌå")]
+    public GameObject dust;
     void Start()
     {
         Init();
@@ -112,5 +114,26 @@ public class Body : MonoBehaviour
                 other.gameObject.GetComponent<Collectable>().flyDir = flyDir;
             }
         }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag.Equals("Collectable") && flying)
+        {
+            GameManager.instance.flyingObjects.Add(collision.gameObject);
+            collision.gameObject.GetComponent<Collectable>().flying = true;
+            collision.gameObject.GetComponent<Collectable>().flyDir = flyDir;
+        }
+    }
+
+    public void GenerateDust(Vector3 ori)
+    {
+        Debug.Log("Dust:" + transform.localPosition);
+        int num = Random.Range(2, 5);
+        for(int i=0;i<num;i++)
+        {
+            GameObject d = Instantiate(dust);
+            d.transform.position = ori +  new Vector3(Random.Range(-0.3f,0.3f),Random.Range(-0.3f,0.3f),0);
+        }
+        
     }
 }

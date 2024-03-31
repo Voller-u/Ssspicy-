@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     public List<GameObject> flyingObjects;
 
     public int CollectableNum;
+
+    public bool gameOver;
     void Awake()
     {
         if(GameManager.instance == null)
@@ -49,5 +51,10 @@ public class GameManager : MonoBehaviour
             }
         }
         flyingObjects.Clear();
+    }
+
+    public void GameOver()
+    {
+
     }
 }

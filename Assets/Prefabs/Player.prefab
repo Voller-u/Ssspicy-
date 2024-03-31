@@ -77,7 +77,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1210268449
   m_SortingLayer: 1
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: a21826afd3fa3da43b58abfb96d7848a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -104,6 +104,8 @@ MonoBehaviour:
   flying: 0
   flyDir: {x: 0, y: 0, z: 0}
   flySpeed: 0.005
+  falling: 0
+  fallingSpeed: 10
   bodies:
   - {fileID: 0}
   - {fileID: 0}
@@ -127,6 +129,11 @@ MonoBehaviour:
   - {fileID: 21300000, guid: c7c23d6d763f7a9459e4b9e8eb374e6f, type: 3}
   - {fileID: 21300000, guid: 0d8f549470c73244cb75657e400f88f7, type: 3}
   - {fileID: 21300000, guid: 5bb041fe613536f46a392147c59ff354, type: 3}
+  crySprites:
+  - {fileID: 21300000, guid: 3a6d5b731d8f8324da3f9be3047d25e2, type: 3}
+  - {fileID: 21300000, guid: 090eec3e91a92b94c92748990692c27e, type: 3}
+  - {fileID: 21300000, guid: 54f12e5c42c12094dbb9ed3609efc3a8, type: 3}
+  - {fileID: 21300000, guid: 536e0cd72db2bad4c9d448d77b71a403, type: 3}
   bodyPrefab: {fileID: 5613795295239481877, guid: bcc9917d23c3a134f92866bd58c5eeb5, type: 3}
   fire: {fileID: 8269456400068205092}
   orient: {x: 0, y: 0, z: 0}
@@ -137,6 +144,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   status: []
+  onShow: 0
+  showTime: 0
 --- !u!61 &585347587157525317
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -240,13 +249,17 @@ GameObject:
   m_Component:
   - component: {fileID: 2577747178054094978}
   - component: {fileID: 5430018791267530688}
+  - component: {fileID: 6115696921884688120}
+  - component: {fileID: 536238622953745645}
+  - component: {fileID: 7728053173898524208}
+  - component: {fileID: 6804935502705921090}
   m_Layer: 8
   m_Name: Fire
-  m_TagString: Untagged
+  m_TagString: Fire
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2577747178054094978
 Transform:
   m_ObjectHideFlags: 0
@@ -314,3 +327,115 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!61 &6115696921884688120
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8269456400068205092}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.06674048, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2.56, y: 0.8}
+    newSize: {x: 4, y: 1.25}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.79348093, y: 0.8}
+  m_EdgeRadius: 0
+--- !u!50 &536238622953745645
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8269456400068205092}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 0
+  m_CollisionDetection: 0
+  m_Constraints: 4
+--- !u!95 &7728053173898524208
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8269456400068205092}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 4213ff1b3e77f774d92a46f26f94dbdc, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6804935502705921090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8269456400068205092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99854a6a07705e44386a18c3b64ea109, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  generatePoint: {x: 0, y: 0, z: 0}
+  orient: {x: 0, y: 0, z: 0}
+  firePrefab: {fileID: 2092775295547934936, guid: f41b845dc2599a849a9f2a9f5a83eb56, type: 3}
+  maxTime: 0.3
+  timer: 0
+  fireTime: 0.3
+  fireSpeed: 1.2

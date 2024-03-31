@@ -23,10 +23,13 @@ public class Player : MonoBehaviour
     public List<Sprite> fallingSprites;
     [Header("开心头部贴图")]
     public List<Sprite> happySprites;
+    [Header("伤心头部贴图")]
+    public List<Sprite> crySprites;
     [Header("身体预制体")]
     public GameObject bodyPrefab;
     public GameObject fire;
     //头部朝向
+    [Header("头部朝向")]
     public Vector3 orient;
     private Rigidbody2D rb;
     private Collider2D coll;
@@ -37,6 +40,10 @@ public class Player : MonoBehaviour
 
     [Header("状态位置")]
     public List<Vector3> status = new List<Vector3>();
+
+    [Header("展示属性")]
+    public bool onShow;
+    public float showTime;
 
     private void Awake()
     {
@@ -146,7 +153,7 @@ public class Player : MonoBehaviour
     /// <param name="dir">移动方向</param>
     public void UpdateSprite(Vector3 dir)
     {
-        if (flying || falling) return;
+        if (flying || falling || onShow) return;
         //if (dir == orient) 
         //    return;
         if (dir == Vector3.right)
@@ -166,7 +173,7 @@ public class Player : MonoBehaviour
             GetComponent<SpriteRenderer>().sprite = sprites[3];
         }
 
-        orient = dir;
+        
 
 
     }
@@ -223,7 +230,7 @@ public class Player : MonoBehaviour
         }
 
         //如果输入了方向键
-        if (tempMoveDir != Vector3.zero && !flying && !falling)
+        if (tempMoveDir != Vector3.zero && !flying && !falling && !onShow)
         {
             Debug.Log(tempMoveDir);
             moveDir = tempMoveDir;
@@ -274,12 +281,7 @@ public class Player : MonoBehaviour
             GameManager.instance.SetFlyEnd();
 
         }
-        else if(other.collider.tag.Equals("Collectable"))
-        {
-            GameManager.instance.flyingObjects.Add(other.gameObject);
-            other.gameObject.GetComponent<Collectable>().flying = true;
-            other.gameObject.GetComponent<Collectable>().flyDir = flyDir;
-        }
+        
     }
 
     private bool CanMoveDir(Vector3 moveDir)
@@ -307,6 +309,10 @@ public class Player : MonoBehaviour
     /// <param name="dir">方向向量</param>
     void Move(Vector3 dir)
     {
+        if (bodies.Count > 0)
+        {
+            bodies[^1].GenerateDust(bodies[^1].transform.position);
+        }
         //头部和身体各个部位的位置
         List<Vector3> poses = new List<Vector3>();
         poses.Add(transform.position);
@@ -327,32 +333,29 @@ public class Player : MonoBehaviour
             EatBanana();
             status.Clear();
         }
+        orient = dir;
         
     }
 
     public void EatPepper()
     {
-        flying = true;
-        flyDir = -moveDir;
-        GameManager.instance.flyingObjects.Add(this.gameObject);
-        foreach (Body b in bodies)
-        {
-            b.flying = true;
-            b.flyDir = flyDir;
-            GameManager.instance.flyingObjects.Add(b.gameObject);
-        }
-        
+        StartCoroutine(EEatPepper());
+    }
 
-
+    IEnumerator EEatPepper()
+    {
+        Debug.Log("协程开始");
+        onShow = true;
         if (moveDir.x > 0.5f)
         {
             fire.transform.rotation = Quaternion.Euler(0, 0, 0);
             Debug.Log("好辣 x->");
             GetComponent<SpriteRenderer>().sprite = spicySprites[0];
-            Debug.Log("sprite:" + spicySprites[0]);
+            //Debug.Log("sprite:" + spicySprites[0]);
         }
         if (moveDir.x < -0.5f)
         {
+            Debug.Log("好辣 x<-");
             fire.transform.rotation = Quaternion.Euler(0, 0, 180);
             GetComponent<SpriteRenderer>().sprite = spicySprites[2];
         }
@@ -367,10 +370,20 @@ public class Player : MonoBehaviour
             GetComponent<SpriteRenderer>().sprite = spicySprites[1];
         }
         fire.transform.localPosition = new Vector3(moveDir.x, moveDir.y, moveDir.z);
-        Debug.Log("localPosition:" + fire.transform.localPosition);
+        yield return new WaitForSeconds(0.3f);
+        Debug.Log("协程继续执行");
+        flying = true;
+        onShow = false;
+        flyDir = -moveDir;
+        GameManager.instance.flyingObjects.Add(this.gameObject);
+        foreach (Body b in bodies)
+        {
+            b.flying = true;
+            b.flyDir = flyDir;
+            GameManager.instance.flyingObjects.Add(b.gameObject);
+        }
         fire.SetActive(true);
 
-         
     }
 
     public void EatBanana()
@@ -405,20 +418,43 @@ public class Player : MonoBehaviour
         {
             //胜利
             Debug.Log("Victory");
-            GetComponent<SpriteRenderer>().sortingLayerName = "Default";
-            GetComponent<SpriteRenderer>().sortingOrder = -10;
-            StartCoroutine(Victory());
+            StartCoroutine(IntoHole(true));
+        }
+        else if(collision.tag.Equals("SandPit"))
+        {
+            if(!flying)
+                StartCoroutine(IntoHole(false));
+        }
+        else if (collision.tag.Equals("Collectable") && flying)
+        {
+            GameManager.instance.flyingObjects.Add(collision.gameObject);
+            collision.gameObject.GetComponent<Collectable>().flying = true;
+            collision.gameObject.GetComponent<Collectable>().flyDir = flyDir;
         }
     }
 
-    IEnumerator Victory()
+    IEnumerator IntoHole(bool isHole)
     {
+        if(!isHole)
+        {
+            if (orient == Vector3.right)
+                GetComponent<SpriteRenderer>().sprite = fallingSprites[0];
+            else if (orient == Vector3.down)
+                GetComponent<SpriteRenderer>().sprite = fallingSprites[1];
+            else if (orient == Vector3.left)
+                GetComponent<SpriteRenderer>().sprite = fallingSprites[2];
+            else if (orient == Vector3.up)
+                GetComponent<SpriteRenderer>().sprite = fallingSprites[3];
+            yield return new WaitForSeconds(0.5f);
+        }
+        GetComponent<SpriteRenderer>().sortingLayerName = "Default";
+        GetComponent<SpriteRenderer>().sortingOrder = -1000;
         int num = bodies.Count;
         for (int i = 0; i < num; i++)
         {
             Move(orient);
             bodies[i].GetComponent<SpriteRenderer>().sortingLayerName = "Default";
-            bodies[i].GetComponent<SpriteRenderer>().sortingOrder = -10;
+            bodies[i].GetComponent<SpriteRenderer>().sortingOrder = -1000;
             yield return new WaitForSeconds(0.15f);
             //TODO加载下一关
         }

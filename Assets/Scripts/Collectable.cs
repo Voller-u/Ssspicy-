@@ -4,23 +4,41 @@ using UnityEngine;
 
 public class Collectable : MonoBehaviour
 {
+    public bool collectable;
     public LayerMask detectLayer;
     public bool flying;
+    public bool falling;
     public Rigidbody2D rb;
     public float flySpeed;
+    public float fallingSpeed; 
     public Vector3 flyDir;
-
+    public LayerMask ground;
+    private Collider2D coll;
+    public GameObject shadow;
     private void Start()
     {
-        GameManager.instance.CollectableNum++;
+        if(collectable)
+            GameManager.instance.CollectableNum++;
         Debug.Log(this.name + "++");
         rb = GetComponent<Rigidbody2D>();
+        coll = GetComponent<Collider2D>();
     }
 
     private void Update()
     {
         Fly();
+        Fall();
+        CooperationRectify();
     }
+
+    void CooperationRectify()
+    {
+        if (flying || falling) return;
+
+        transform.position = new Vector3(Mathf.Floor(transform.position.x) + 0.5f,
+           Mathf.Floor(transform.position.y) + 0.5f, transform.position.z);
+    }
+
     /// <summary>
     /// 判断收集物是否可以推动，如果可以则推动，否则吃掉第一个收集物
     /// </summary>
@@ -33,7 +51,10 @@ public class Collectable : MonoBehaviour
         Debug.Log("hit");
         if (!hit)
         {
-            transform.Translate(moveDir);
+            if(collectable)
+                transform.parent.transform.Translate(moveDir);
+            else 
+                transform.Translate(moveDir);
             return true;
         }
         else
@@ -42,20 +63,31 @@ public class Collectable : MonoBehaviour
             {
                 if (hit.collider.GetComponent<Collectable>().CanMoveDir(player,moveDir, false))
                 {
-                    transform.Translate(moveDir);
+                    if (collectable)
+                        transform.parent.transform.Translate(moveDir);
+                    else
+                        transform.Translate(moveDir);
                     return true;
                 }
                 //这时候就应该被吃掉
                 else if (isOrigin)
                 {
-                    Eaten(player);
-                    return true;
+                    if (collectable)
+                    {
+                        Eaten(player);
+                        return true;
+                    }
+                    else return false;
                 }
             }
             else if (isOrigin)
             {
-                Eaten(player);
-                return true;
+                if(collectable)
+                {
+                    Eaten(player);
+                    return true;
+                }
+                else return false;
             }
         }
         return false;
@@ -94,5 +126,36 @@ public class Collectable : MonoBehaviour
             }
         }
     }
-
+    void Fall()
+    {
+        if(flying) return; 
+        if(!falling)
+        {
+            if(!coll.IsTouchingLayers(ground))
+            {
+                falling = true;
+                coll.enabled = false;
+                GetComponent<SpriteRenderer>().sortingLayerName = "Default";
+                GetComponent<SpriteRenderer>().sortingOrder = -10;
+                if (collectable) 
+                    shadow.SetActive(false);
+            }
+        }
+        else
+        {
+            if (collectable)
+            {
+                Vector3 vector3 = transform.parent.transform.position;
+                transform.parent.transform.position = new Vector3(vector3.x,
+                    vector3.y - Time.deltaTime * fallingSpeed, 0f);
+               
+            }
+            else
+            {
+                Vector3 vector3 = transform.position;
+                transform.position = new Vector3(vector3.x,
+                    vector3.y - Time.deltaTime * fallingSpeed, 0f);
+            }
+        }
+    }
 }
