@@ -15,6 +15,11 @@ public class Collectable : MonoBehaviour
     public LayerMask ground;
     private Collider2D coll;
     public GameObject shadow;
+
+    private void Awake()
+    {
+        Debug.Log("collectable …˙≥…¡À");
+    }
     private void Start()
     {
         if(collectable)

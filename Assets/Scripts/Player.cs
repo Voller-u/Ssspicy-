@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -49,11 +50,12 @@ public class Player : MonoBehaviour
     {
         if (bodies.Count > 0) bodies[^1].isTail = true;
 
-
+        Debug.Log("player生成了");
     }
     // Start is called before the first frame update
     void Start()
     {
+        
         InitSprite();
         rb = GetComponent<Rigidbody2D>();
         coll = GetComponent<Collider2D>();
@@ -88,14 +90,25 @@ public class Player : MonoBehaviour
         if (!flying)
         {
             bool fall = true;
-            if (coll.IsTouchingLayers(ground)) fall = false;
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, moveDir, 0.1f, ground);
+            if(hit)
+                fall = false;
+            //if (coll.IsTouchingLayers(ground))
+            //{
+                
+            //    fall = false;
+            //}
             foreach (var b in bodies)
             {
                 if (b.coll.IsTouchingLayers(ground)) fall = false;
             }
             if (fall)
             {
-                Debug.Log("掉下去");
+
+                //Debug.Log("我不在地面上");
+//#if UNITY_EDITOR
+//                UnityEditor.EditorApplication.isPaused = true;
+//#endif
                 falling = true;
                 if (orient == Vector3.right)
                     GetComponent<SpriteRenderer>().sprite = fallingSprites[0];
@@ -108,10 +121,14 @@ public class Player : MonoBehaviour
 
                 coll.enabled = false;
                 foreach (var b in bodies) b.coll.enabled = false;
-
+                GetComponent<SpriteRenderer>().sortingLayerName = "Default";
                 GetComponent<SpriteRenderer>().sortingOrder = -10;
-                foreach(var b in bodies) b.GetComponent<SpriteRenderer>().sortingOrder = -10;
-                Fall();
+                foreach (var b in bodies)
+                {
+                    b.GetComponent<SpriteRenderer>().sortingLayerName = "Default";
+                    b.GetComponent<SpriteRenderer>().sortingOrder = -10;
+                }
+                    Fall();
             }
 
         }
@@ -189,16 +206,6 @@ public class Player : MonoBehaviour
         {
             bodies[i].UpdateSprite(ts[i], ts[i + 2]);
         }
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
-        //    string s = "";
-        //    foreach (var v in ts)
-        //    {
-        //        s += v.ToString();
-        //        s += "\n";
-        //    }
-        //    Debug.Log(s);
-        //}
     }
 
     void InputKey()
