@@ -17,18 +17,21 @@ public class Fire : MonoBehaviour
     public float fireSpeed;
     void Start()
     {
-        orient = transform.parent.GetComponent<Player>().orient;
+        
 
     }
 
     // Update is called once per frame
     void Update()
     {
+        
         GenerateFire();
     }
 
     void GenerateFire()
     {
+        if(transform.parent.GetComponent<Player>() != null)
+            orient = transform.parent.GetComponent<Player>().orient;
         generatePoint = transform.position + orient * 0.4f;
         timer += Time.deltaTime;
         if(timer > maxTime)
@@ -51,7 +54,7 @@ public class Fire : MonoBehaviour
             dir.x = Mathf.Cos((baseAngle + angle) * 2 * Mathf.PI /360);
             dir.y = Mathf.Sin((baseAngle + angle) * 2 * Mathf.PI / 360);
 
-            Debug.Log("dir = " + dir);
+            //Debug.Log("dir = " + dir);
 
             fire.GetComponent<Rigidbody2D>().velocity = dir * fireSpeed;
 

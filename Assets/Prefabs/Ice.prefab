@@ -178,9 +178,10 @@ MonoBehaviour:
   flying: 0
   falling: 0
   rb: {fileID: 0}
-  flySpeed: 0.005
+  flySpeed: 0.012
   fallingSpeed: 10
   flyDir: {x: 0, y: 0, z: 0}
   ground:
     serializedVersion: 2
     m_Bits: 8
+  shadow: {fileID: 0}

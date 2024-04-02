@@ -153,7 +153,7 @@ MonoBehaviour:
   flying: 0
   falling: 0
   rb: {fileID: 0}
-  flySpeed: 0.005
+  flySpeed: 0.012
   fallingSpeed: 10
   flyDir: {x: 0, y: 0, z: 0}
   ground:
@@ -301,7 +301,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7264756169299803045}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pepper
   m_TagString: Untagged
   m_Icon: {fileID: 0}

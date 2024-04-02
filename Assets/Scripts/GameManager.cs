@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
+using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,16 +12,18 @@ public class GameManager : MonoBehaviour
     public List<GameObject> flyingObjects;
 
     public int CollectableNum;
+    public int gameLevel;
+    public int maxLevelId;
 
     public bool gameOver;
+    public bool gamePass;
+    //掉落物掉下去了
+    public bool collectableFall;
 
     public bool intoLevelChoose;
 
-    public GameObject playerPrefab;
-    public GameObject bodyPrefab;
-    public GameObject pepperPrefab;
-    public GameObject bananaPrefab;
-    public GameObject icePrefab;
+    
+    
 
     [Serializable]
     public struct Items
@@ -38,6 +42,8 @@ public class GameManager : MonoBehaviour
     }
 
     public List<Items> items;
+
+    public List<TextAsset> levelMaps;
 
     void Awake()
     {
@@ -82,43 +88,12 @@ public class GameManager : MonoBehaviour
         flyingObjects.Clear();
     }
 
-    public void GameOver()
+    public void InitGame()
     {
-
+        GameManager.instance.CollectableNum = 0;
+        GameManager.instance.collectableFall = false;
+        GameManager.instance.gameOver = false;
+        GameManager.instance.gamePass  = false;
     }
 
-    public void GenerateItems(int index)
-    {
-        //生成蛇
-        GameObject player = Instantiate(playerPrefab);
-        player.transform.position = items[index].snakePosition[0];
-        for(int i = 1; i <= items[index].bodyNum;i++)
-        {
-            GameObject body = Instantiate(bodyPrefab,player.transform);
-            player.GetComponent<Player>().bodies.Add(body.GetComponent<Body>());    
-            body.transform.localPosition = items[index].snakePosition[i];
-        }
-
-        //生成辣椒
-        for(int i = 0; i < items[index].pepperNum;i++)
-        {
-            GameObject pepper = Instantiate(pepperPrefab);
-            pepper.transform.position = items[index].pepperPosition[i];
-        }
-
-        //生成香蕉
-        for (int i = 0; i < items[index].bananaNum; i++)
-        {
-            GameObject banana = Instantiate(bananaPrefab);
-            banana.transform.position = items[index].bananaPosition[i];
-        }
-
-        //生成冰块
-        for (int i = 0; i < items[index].iceNum; i++)
-        {
-            GameObject ice = Instantiate(icePrefab);
-            ice.transform.position = items[index].icePosition[i];
-        }
-
-    }
 }

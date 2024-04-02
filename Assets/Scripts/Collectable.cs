@@ -39,7 +39,7 @@ public class Collectable : MonoBehaviour
     void CooperationRectify()
     {
         if (flying || falling) return;
-
+        Debug.Log("坐标修正的锅");
         transform.position = new Vector3(Mathf.Floor(transform.position.x) + 0.5f,
            Mathf.Floor(transform.position.y) + 0.5f, transform.position.z);
     }
@@ -116,17 +116,32 @@ public class Collectable : MonoBehaviour
             }
         }
     }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag.Equals("Collectable") && flying)
+        {
+            GameManager.instance.flyingObjects.Add(collision.gameObject);
+            collision.gameObject.GetComponent<Collectable>().flying = true;
+            collision.gameObject.GetComponent<Collectable>().flyDir = flyDir;
+        }
+    }
 
     void Fly()
     {
         if (flying)
         {
-            transform.position = new Vector3(transform.position.x + flyDir.x * flySpeed,
+            Debug.Log("飞起来咯" + transform.position + flyDir * flySpeed);
+            if(transform.parent.gameObject.layer == 7)
+                transform.parent.position = new Vector3(transform.parent.position.x + flyDir.x * flySpeed,
+                transform.parent.position.y + flySpeed * flyDir.y, 0f);
+            else
+                transform.position = new Vector3(transform.position.x + flyDir.x * flySpeed,
                 transform.position.y + flySpeed * flyDir.y, 0f);
             RaycastHit2D hit = Physics2D.Raycast(transform.position + 0.5f * flyDir, flyDir, 0.2f, detectLayer);
             if (!hit) return;
             if(hit.collider.tag.Equals("Stone"))
             {
+                Debug.Log("飞完力");
                 GameManager.instance.SetFlyEnd();
             }
         }
@@ -136,7 +151,8 @@ public class Collectable : MonoBehaviour
         if(flying) return; 
         if(!falling)
         {
-            if(!coll.IsTouchingLayers(ground))
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector3.left, 0.001f, ground);
+            if (!hit)
             {
                 falling = true;
                 coll.enabled = false;
@@ -153,7 +169,7 @@ public class Collectable : MonoBehaviour
                 Vector3 vector3 = transform.parent.transform.position;
                 transform.parent.transform.position = new Vector3(vector3.x,
                     vector3.y - Time.deltaTime * fallingSpeed, 0f);
-               
+                GameManager.instance.collectableFall = true;
             }
             else
             {

@@ -132,6 +132,7 @@ public class Body : MonoBehaviour
         for(int i=0;i<num;i++)
         {
             GameObject d = Instantiate(dust);
+            Destroy(d, 5f);
             d.transform.position = ori +  new Vector3(Random.Range(-0.3f,0.3f),Random.Range(-0.3f,0.3f),0);
         }
         

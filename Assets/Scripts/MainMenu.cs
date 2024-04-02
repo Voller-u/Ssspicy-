@@ -20,6 +20,7 @@ public class MainMenu : MonoBehaviour
         {
             StartGame();
         }
+
     }
     public void StartGame()
     {
@@ -39,10 +40,14 @@ public class MainMenu : MonoBehaviour
 
     public void ChooseLevel(int levelId)
     {
-        if (levelId == 1) SceneManager.LoadScene("SampleScene");
         Debug.Log("Level choose : " + levelId);
-        if (SceneManager.GetSceneByName("Level" + levelId).IsValid())
-            SceneManager.LoadScene("Level" + levelId);
+        if (levelId <= GameManager.instance.maxLevelId)
+        {
+            GameManager.instance.gameLevel = levelId;
+            GameManager.instance.InitGame();
+            SceneManager.LoadScene("SampleScene");
+        }
+            
         else
             StartCoroutine(ShowLockedPanel());
     }

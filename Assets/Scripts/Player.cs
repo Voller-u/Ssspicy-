@@ -36,6 +36,7 @@ public class Player : MonoBehaviour
     private Collider2D coll;
     [Header("射线检测的层")]
     public LayerMask detectLayer;
+    public LayerMask moveLayer;
     public LayerMask ground;
     Vector3 moveDir = Vector3.zero;
 
@@ -46,8 +47,18 @@ public class Player : MonoBehaviour
     public bool onShow;
     public float showTime;
 
+    [Header("提示按键")]
+    public GameObject leftKey;
+    public GameObject upKey;
+    public GameObject rightKey;
+    public GameObject downKey;
+    [Header("提示时间")]
+    public float tipTime;
+    public float tipTimer;
     private void Awake()
     {
+        GameManager.instance.gameOver = false;
+        GameManager.instance.gamePass = false;
         if (bodies.Count > 0) bodies[^1].isTail = true;
 
         Debug.Log("player生成了");
@@ -70,6 +81,78 @@ public class Player : MonoBehaviour
         UpdateBody();
         CooperationRectify();
         FallJudge();
+        UpdateTip();
+        DetectGame();
+    }
+
+    //更新提示信息
+    void UpdateTip()
+    {
+        tipTimer += Time.deltaTime;
+        if(tipTimer >= tipTime)
+        {
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector3.left, 1f, moveLayer);
+            if (!hit)
+                leftKey.SetActive(true);
+            hit = Physics2D.Raycast(transform.position, Vector3.right, 1f, moveLayer);
+            if(!hit)
+                rightKey.SetActive(true);
+            hit = Physics2D.Raycast(transform.position, Vector3.up, 1f, moveLayer);
+            if (!hit)
+                upKey.SetActive(true);
+            hit = Physics2D.Raycast(transform.position, Vector3.down, 1f, moveLayer);
+            if (!hit)
+                downKey.SetActive(true);
+        }
+        else
+        {
+            leftKey.SetActive(false);
+            rightKey.SetActive(false);
+            upKey.SetActive(false);
+            downKey.SetActive(false);
+        }
+    }
+
+    void DetectGame()
+    {
+        if(transform.position.x <-15 || transform.position.x > 15
+            || transform.position.y <-10 || transform.position.y > 10)
+        {
+            GameManager.instance.gameOver = true;
+            Debug.Log("蛇掉下去了");
+            onShow = true;
+        }
+        if(GameManager.instance.collectableFall)
+        {
+            StartCoroutine(CFall());
+        }
+    }
+
+    IEnumerator CFall()
+    {
+        GameManager.instance.collectableFall = false;
+        if (orient == Vector3.right)
+        {
+            GetComponent<SpriteRenderer>().sprite = crySprites[0];
+        }
+        if (orient == Vector3.down)
+        {
+            GetComponent<SpriteRenderer>().sprite = crySprites[1];
+        }
+        if (orient == Vector3.left)
+        {
+            GetComponent<SpriteRenderer>().sprite = crySprites[2];
+        }
+        if (orient == Vector3.up)
+        {
+            GetComponent<SpriteRenderer>().sprite = crySprites[3];
+        }
+
+        onShow = true;
+        yield return new WaitForSeconds(1f);
+        Debug.Log("物体掉下去了");
+        GameManager.instance.gameOver = true;
+        
     }
 
     void UpdateTail()
@@ -90,7 +173,7 @@ public class Player : MonoBehaviour
         if (!flying)
         {
             bool fall = true;
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, moveDir, 0.1f, ground);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, moveDir, 0.001f, ground);
             if(hit)
                 fall = false;
             //if (coll.IsTouchingLayers(ground))
@@ -100,14 +183,15 @@ public class Player : MonoBehaviour
             //}
             foreach (var b in bodies)
             {
-                if (b.coll.IsTouchingLayers(ground)) fall = false;
+                RaycastHit2D hhit = Physics2D.Raycast(b.transform.position, moveDir, 0.001f, ground);
+                if (hhit)
+                    fall = false;
             }
             if (fall)
             {
-
-                //Debug.Log("我不在地面上");
 //#if UNITY_EDITOR
 //                UnityEditor.EditorApplication.isPaused = true;
+
 //#endif
                 falling = true;
                 if (orient == Vector3.right)
@@ -133,6 +217,8 @@ public class Player : MonoBehaviour
 
         }
     }
+
+
 
     void Fall()
     {
@@ -213,7 +299,6 @@ public class Player : MonoBehaviour
         Vector3 tempMoveDir = Vector3.zero;
         if (Input.GetKeyDown(KeyCode.W))
         {
-            Debug.Log("W");
             if ((Vector3.up + orient).x == 0 && (Vector3.up + orient).y == 0) return;
             tempMoveDir = Vector3.up;
         }
@@ -235,6 +320,9 @@ public class Player : MonoBehaviour
             if ((Vector3.left + orient).x == 0 && (Vector3.left + orient).y == 0) return;
             tempMoveDir = Vector3.left;
         }
+
+        if (tempMoveDir != Vector3.zero)
+            tipTimer = 0;
 
         //如果输入了方向键
         if (tempMoveDir != Vector3.zero && !flying && !falling && !onShow)
@@ -434,6 +522,7 @@ public class Player : MonoBehaviour
         }
         else if (collision.tag.Equals("Collectable") && flying)
         {
+            Debug.Log("撞到可收集物了");
             GameManager.instance.flyingObjects.Add(collision.gameObject);
             collision.gameObject.GetComponent<Collectable>().flying = true;
             collision.gameObject.GetComponent<Collectable>().flyDir = flyDir;
@@ -463,8 +552,16 @@ public class Player : MonoBehaviour
             bodies[i].GetComponent<SpriteRenderer>().sortingLayerName = "Default";
             bodies[i].GetComponent<SpriteRenderer>().sortingOrder = -1000;
             yield return new WaitForSeconds(0.15f);
-            //TODO加载下一关
         }
-        
+        if(isHole)
+        {
+            GameManager.instance.gamePass = true;
+        }
+        else
+        {
+            Debug.Log("进沙坑了");
+            GameManager.instance.gameOver = true;
+        }
+        onShow = true;
     }
 }
