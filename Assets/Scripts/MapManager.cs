@@ -51,6 +51,7 @@ public class MapManager : MonoBehaviour
         GameObject player = Instantiate(playerPrefab);
         int headOrient = map[^1][0] - '0';
         player.GetComponent<SpriteRenderer>().sprite = player.GetComponent<Player>().sprites[headOrient];
+        GameObject tail = null;
         for (int i = 0; i < map.Length-1; i++)
         {
             for (int j = 0; j < map[i].Length; j++)
@@ -77,6 +78,11 @@ public class MapManager : MonoBehaviour
                     GameObject body = Instantiate(bodyPrefab,player.transform);
                     player.GetComponent<Player>().bodies.Add(body.GetComponent<Body>());
                     body.transform.position = pos;
+                }
+                else if (map[i][j] == 'L')
+                {
+                    tail = Instantiate(bodyPrefab, player.transform);
+                    tail.transform.position = pos;
                 }
                 else if (map[i][j] == 'P')
                 {
@@ -109,8 +115,10 @@ public class MapManager : MonoBehaviour
                     GameObject sandPit = Instantiate(sandPitPrefab);
                     sandPit.transform.position = pos;
                 }
+
             }
         }
+        player.GetComponent<Player>().bodies.Add(tail.GetComponent<Body>());
     }
 }
 

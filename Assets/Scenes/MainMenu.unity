@@ -3038,7 +3038,7 @@ MonoBehaviour:
   flyingObjects: []
   CollectableNum: 0
   gameLevel: 0
-  maxLevelId: 2
+  maxLevelId: 5
   gameOver: 0
   gamePass: 0
   collectableFall: 0

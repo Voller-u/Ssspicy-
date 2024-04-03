@@ -24,6 +24,10 @@
 
 完成UI，完成按文件加载地图并且已完成两幅地图
 
+## 4.3
+
+修复文件加载地图的bug
+
 <details>
     <summary>TODO</summary>
 

@@ -19,6 +19,10 @@ public class Hole : MonoBehaviour
             on = true;
             SwitchAnim();
         }
+        if (GameManager.instance.gamePass)
+        {
+            animator.SetBool("GameVic", false);
+        }
     }
 
     public void SwitchAnim()

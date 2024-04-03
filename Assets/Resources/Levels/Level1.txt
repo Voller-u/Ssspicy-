@@ -9,7 +9,7 @@
 * * * * G G G G G G G * * * * * G G G G G T G * * * * *
 * * * * G T P G G G G * * * * * G S P G G T G * * * * *
 * * * * G T G G G G G * * * * * G B G G G T G * * * * *
-* * * * G T P G G G G * * * * * G B G G P T G * * * * *
+* * * * G T P G G G G * * * * * G L G G P T G * * * * *
 * * * * G G G G G G G * * * * * G G G G G T G * * * * *
 * * * * * * * * * * * * * * * * * * G G G G G * * * * *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * *

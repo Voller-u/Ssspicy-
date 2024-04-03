@@ -2702,6 +2702,9 @@ MonoBehaviour:
   maps:
   - {fileID: 4900000, guid: d010fe7e62a67e44d821283edb5d687a, type: 3}
   - {fileID: 4900000, guid: 6092facdad2889e468952b3989600759, type: 3}
+  - {fileID: 4900000, guid: 770d3517e28462f45bef6f47352332eb, type: 3}
+  - {fileID: 4900000, guid: 50706b645da4f26449524ef4fd43dafa, type: 3}
+  - {fileID: 4900000, guid: 1a02d277cd7ea9941b275161635ad4d3, type: 3}
 --- !u!1 &608506795
 GameObject:
   m_ObjectHideFlags: 0

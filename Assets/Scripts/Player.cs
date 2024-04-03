@@ -422,13 +422,14 @@ public class Player : MonoBehaviour
             bodies[i].transform.position = new Vector3(targetPos.x, targetPos.y, targetPos.z);
         }
         UpdateSprite(dir);
+        orient = dir;
         if (status.Count > 0)
         {
             //≥‘µΩ¡Àœ„Ω∂
             EatBanana();
             status.Clear();
         }
-        orient = dir;
+        
         
     }
 
@@ -555,6 +556,7 @@ public class Player : MonoBehaviour
         }
         if(isHole)
         {
+
             GameManager.instance.gamePass = true;
         }
         else

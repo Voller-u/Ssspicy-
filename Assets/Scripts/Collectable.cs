@@ -39,7 +39,6 @@ public class Collectable : MonoBehaviour
     void CooperationRectify()
     {
         if (flying || falling) return;
-        Debug.Log("×ø±êÐÞÕýµÄ¹ø");
         transform.position = new Vector3(Mathf.Floor(transform.position.x) + 0.5f,
            Mathf.Floor(transform.position.y) + 0.5f, transform.position.z);
     }
