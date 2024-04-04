@@ -5,7 +5,7 @@
 * * * * * * * * * * T G G G G G * * * * G G G G G * * *
 * * * * * * * * * * T T G G S G * * * * G G P G G * * *
 * * * * * * * * * * T T A G B G * * * * G G G G G * * *
-* * * * * * * * * * T T G G B G * * * * G G H G G * * * 
+* * * * * * * * * * T T G G L G * * * * G G H G G * * * 
 * * * * * * * * * * T G G G G G * * * * G G G G G * * *
 * * * * * * * * * * T A G G A T * * * * G G G G G * * *
 * * * * * * * * * * T T G G T T * * * * * * * * * * * *

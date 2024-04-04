@@ -52,7 +52,18 @@ public class MapManager : MonoBehaviour
         int headOrient = map[^1][0] - '0';
         player.GetComponent<SpriteRenderer>().sprite = player.GetComponent<Player>().sprites[headOrient];
         GameObject tail = null;
-        for (int i = 0; i < map.Length-1; i++)
+        for (int i = 0; i < map.Length - 1; i++)
+        {
+            for (int j = 0; j < map[i].Length; j++)
+            {
+                if (map[i][j] == 'S')
+                {
+                    Vector3 pos = new Vector3(j - 13.5f, 7.5f - i, 0);
+                    player.transform.position = pos;
+                }
+            }
+        }
+                for (int i = 0; i < map.Length-1; i++)
         {
             for (int j = 0; j < map[i].Length; j++)
             {
@@ -69,10 +80,7 @@ public class MapManager : MonoBehaviour
                     GameObject stoneBtm = Instantiate(stoneBotmPrefab);
                     stoneBtm.transform.position = pos;
                 }
-                else if (map[i][j] == 'S')
-                {
-                    player.transform.position = pos;
-                }
+                
                 else if (map[i][j] == 'B')
                 {
                     GameObject body = Instantiate(bodyPrefab,player.transform);

@@ -93,16 +93,16 @@ public class Player : MonoBehaviour
         {
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector3.left, 1f, moveLayer);
             if (!hit)
-                leftKey.SetActive(true);
+                StartCoroutine(SetTipActive(leftKey));
             hit = Physics2D.Raycast(transform.position, Vector3.right, 1f, moveLayer);
             if(!hit)
-                rightKey.SetActive(true);
+                StartCoroutine(SetTipActive(rightKey));
             hit = Physics2D.Raycast(transform.position, Vector3.up, 1f, moveLayer);
             if (!hit)
-                upKey.SetActive(true);
+                StartCoroutine(SetTipActive(upKey));
             hit = Physics2D.Raycast(transform.position, Vector3.down, 1f, moveLayer);
             if (!hit)
-                downKey.SetActive(true);
+                StartCoroutine(SetTipActive(downKey));
         }
         else
         {
@@ -111,6 +111,12 @@ public class Player : MonoBehaviour
             upKey.SetActive(false);
             downKey.SetActive(false);
         }
+    }
+
+    IEnumerator SetTipActive(GameObject tip)
+    {
+        yield return new WaitForEndOfFrame();
+        tip.SetActive(true);
     }
 
     void DetectGame()
@@ -370,12 +376,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (!flying) return;
-        if(other.collider.tag.Equals("Stone"))
-        {
-            GameManager.instance.SetFlyEnd();
-
-        }
+        
         
     }
 
@@ -510,7 +511,12 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag.Equals("Hole") && collision.GetComponent<Hole>().on)
+        if (flying && collision.tag.Equals("Stone"))
+        {
+            GameManager.instance.SetFlyEnd();
+
+        }
+        if (collision.tag.Equals("Hole") && collision.GetComponent<Hole>().on)
         {
             //Ê¤Àû
             Debug.Log("Victory");

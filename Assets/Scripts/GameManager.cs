@@ -65,6 +65,12 @@ public class GameManager : MonoBehaviour
         
     }
 
+    IEnumerator CloseFire(Player player)
+    {
+        yield return new WaitForSeconds(0.3f);
+        player.fire.SetActive(false);
+    }
+
     public void SetFlyEnd()
     {
         Debug.Log("飞行时间结束了");
@@ -73,7 +79,7 @@ public class GameManager : MonoBehaviour
             if(obj.GetComponent<Player>() != null)
             {
                 obj.GetComponent<Player>().flying = false;
-                obj.GetComponent<Player>().fire.SetActive(false);
+                StartCoroutine(CloseFire(obj.GetComponent<Player>()));
                 obj.GetComponent<Player>().UpdateSprite(-obj.GetComponent<Player>().flyDir);
             }
             else if(obj.GetComponent<Body>() != null)
@@ -94,6 +100,7 @@ public class GameManager : MonoBehaviour
         GameManager.instance.collectableFall = false;
         GameManager.instance.gameOver = false;
         GameManager.instance.gamePass  = false;
+        flyingObjects.Clear();
     }
 
 }

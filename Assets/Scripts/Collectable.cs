@@ -52,7 +52,7 @@ public class Collectable : MonoBehaviour
     public bool CanMoveDir(Player player, Vector3 moveDir,bool isOrigin)
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position + 1f * moveDir, moveDir, 0.2f, detectLayer);
-        Debug.Log("hit");
+        //Debug.Log("hit");
         if (!hit)
         {
             if(collectable)
@@ -63,10 +63,21 @@ public class Collectable : MonoBehaviour
         }
         else
         {
+            Debug.Log("tag :" + hit.collider.tag);
+            if(hit.collider.tag.Equals("Body") && hit.collider.GetComponent<Body>().isTail)
+            {
+                Debug.Log("打到尾巴，可以走");
+                if (collectable)
+                    transform.parent.transform.Translate(moveDir);
+                else
+                    transform.Translate(moveDir);
+                return true;
+            }
             if (hit.collider.GetComponent<Collectable>() != null)
             {
                 if (hit.collider.GetComponent<Collectable>().CanMoveDir(player,moveDir, false))
                 {
+                    
                     if (collectable)
                         transform.parent.transform.Translate(moveDir);
                     else
